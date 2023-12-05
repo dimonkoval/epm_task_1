@@ -1,40 +1,31 @@
-package com.epam.rd.autocode.assestment.аppliances.model;
+package com.epam.rd.autocode.assessment.appliances.model;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.epam.rd.autocode.assestment.аppliances.model.TestConstants.*;
-import static com.epam.rd.autocode.assestment.аppliances.model.TestConstants.Employee.*;
+import static com.epam.rd.autocode.assessment.appliances.model.TestConstants.*;
+import static com.epam.rd.autocode.assessment.appliances.model.TestConstants.User.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class EmployeeTest {
-
+class UserTest {
     private static List<Field> allFields;
     private static List<Constructor<?>> allConstructors;
     private static List<Method> allMethods;
 
-    private static Class<?> clazz;
-
     @BeforeAll
     static void setup() throws ClassNotFoundException {
-        clazz = Class.forName(EMPLOYEE_TYPE);
+        final Class<?> clazz = Class.forName(USER_TYPE);
         allFields = Arrays.asList(clazz.getDeclaredFields());
         allConstructors = Arrays.asList(clazz.getConstructors());
         allMethods = Arrays.asList(clazz.getDeclaredMethods());
-    }
-
-    @Test
-    @DisplayName("Test superclass is User")
-    void checkSuperclassIsUser() {
-        final Class<?> superclass = clazz.getSuperclass();
-        final String actual = superclass.getTypeName();
-        assertEquals(USER_TYPE, actual);
     }
 
     /*Tests for CONSTRUCTORS*/
@@ -62,7 +53,7 @@ class EmployeeTest {
     }
 
     @Test
-    @DisplayName(EMPLOYEE_TYPE + " has to constructor with " + PARAMETERS_IN_CONSTRUCTOR_WITH_PARAMETERS + " parameters")
+    @DisplayName(USER_TYPE + " has to constructor with " + PARAMETERS_IN_CONSTRUCTOR_WITH_PARAMETERS + " parameter")
     void checkConstructorWithParameter() {
         long count = allConstructors.stream()
                 .filter(c -> c.getParameterCount() == PARAMETERS_IN_CONSTRUCTOR_WITH_PARAMETERS)
@@ -89,7 +80,7 @@ class EmployeeTest {
         final long countStringParameters = parameters.stream()
                 .filter(p -> p.getType().getTypeName().equals(STRING_TYPE))
                 .count();
-        assertEquals(4, countStringParameters);
+        assertEquals(3, countStringParameters);
     }
 
     /* Tests for FIELDS */
@@ -108,12 +99,17 @@ class EmployeeTest {
         assertEquals(CLASS_COUNT_FIELDS, count);
     }
 
-    @Test
+    @ParameterizedTest
+    @CsvSource({"id,1",
+            "name,1",
+            "email,1",
+            "password,1"
+    })
     @DisplayName("To " + CLASS_NAME + " check fields name")
-    void checkFieldNameName() {
+    void checkFieldNameName(String name, long expected) {
         final long count = allFields.stream()
-                .filter(f -> f.getName().equals(FIELD_DEPARTMENT))
+                .filter(f -> f.getName().equals(name))
                 .count();
-        assertEquals(1, count);
+        assertEquals(expected, count);
     }
 }

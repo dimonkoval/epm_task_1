@@ -1,26 +1,28 @@
-package com.epam.rd.autocode.assestment.аppliances.model;
+package com.epam.rd.autocode.assessment.appliances.model;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.epam.rd.autocode.assestment.аppliances.model.TestConstants.*;
-import static com.epam.rd.autocode.assestment.аppliances.model.TestConstants.Manufacturer.*;
+import static com.epam.rd.autocode.assessment.appliances.model.TestConstants.*;
+import static com.epam.rd.autocode.assessment.appliances.model.TestConstants.Appliance.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ManufacturerTest {
+class ApplianceTest {
     private static List<Field> allFields;
     private static List<Constructor<?>> allConstructors;
     private static List<Method> allMethods;
 
     @BeforeAll
     static void setup() throws ClassNotFoundException {
-        final Class<?> clazz = Class.forName(MANUFACTURER_TYPE);
+        final Class<?> clazz = Class.forName(APPLIANCE_TYPE);
         allFields = Arrays.asList(clazz.getDeclaredFields());
         allConstructors = Arrays.asList(clazz.getConstructors());
         allMethods = Arrays.asList(clazz.getDeclaredMethods());
@@ -37,24 +39,24 @@ class ManufacturerTest {
     @DisplayName("Modifiers constructors can be public")
     void checkModifiersConstructors() {
         boolean actual = allConstructors.stream()
-                .allMatch(c -> Modifier.isPublic(c.getModifiers()));
+                .allMatch(constructor -> Modifier.isPublic(constructor.getModifiers()));
         assertTrue(actual);
     }
 
     @Test
-    @DisplayName("Manufacturer has default constructor")
+    @DisplayName(CLASS_NAME + " has default constructor")
     void checkDefaultConstructor() {
         long count = allConstructors.stream()
-                .filter(c -> c.getParameterCount() == 0)
+                .filter(constructor -> constructor.getParameterCount() == 0)
                 .count();
         assertEquals(1, count);
     }
 
     @Test
-    @DisplayName("Manufacturer has constructor with 2 parameter")
+    @DisplayName(CLASS_NAME + " has constructor with " + PARAMETERS_IN_CONSTRUCTOR_WITH_PARAMETERS + " parameters")
     void checkConstructorWithParameter() {
         long count = allConstructors.stream()
-                .filter(c -> c.getParameterCount() == PARAMETERS_IN_CONSTRUCTOR_WITH_PARAMETERS)
+                .filter(constructor -> constructor.getParameterCount() == PARAMETERS_IN_CONSTRUCTOR_WITH_PARAMETERS)
                 .count();
         assertEquals(1, count);
     }
@@ -75,11 +77,31 @@ class ManufacturerTest {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No parameter with type " + LONG_TYPE));
 
-        parameters.stream()
+        final long countString = parameters.stream()
                 .filter(p -> p.getType().getTypeName().equals(STRING_TYPE))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No parameter with type " + STRING_TYPE));
+                .count();
 
+        parameters.stream()
+                .filter(p -> p.getType().getTypeName().equals(CATEGORY_TYPE))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No parameter with type " + CLASS_PACKAGE + "." + TestConstants.Category.ENUM_NAME));
+
+        parameters.stream()
+                .filter(p -> p.getType().getTypeName().equals(MANUFACTURER_TYPE))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No parameter with type " + CLASS_PACKAGE + "." + TestConstants.Manufacturer.CLASS_NAME));
+
+        parameters.stream()
+                .filter(p -> p.getType().getTypeName().equals(POWER_TYPE_TYPE))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No parameter with type " + CLASS_PACKAGE + "." + TestConstants.PowerType.ENUM_NAME));
+
+        parameters.stream()
+                .filter(p -> p.getType().getTypeName().equals(INT_TYPE))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No parameter with type " + INT_TYPE));
+
+        assertEquals(4, countString);
     }
 
     /* Tests for FIELDS */
@@ -87,22 +109,6 @@ class ManufacturerTest {
     @DisplayName("Count fields")
     void checkCountFields() {
         assertEquals(CLASS_COUNT_FIELDS, allFields.size());
-    }
-
-    @Test
-    @DisplayName(CLASS_NAME + " has field with name " + FIELD_ID)
-    void checkFieldNameId() {
-        Field id = allFields.stream()
-                .filter(f -> f.getName().equals(FIELD_ID))
-                .findFirst().orElseThrow(() -> new RuntimeException("Field " + FIELD_ID + " not found"));
-    }
-
-    @Test
-    @DisplayName(CLASS_NAME + " has field with name " + FIELD_NAME)
-    void checkFieldNameName() {
-        Field name = allFields.stream()
-                .filter(f -> f.getName().equals(FIELD_NAME))
-                .findFirst().orElseThrow(() -> new RuntimeException("Field " + FIELD_NAME + " not found"));
     }
 
     @Test
@@ -115,36 +121,24 @@ class ManufacturerTest {
         assertEquals(CLASS_COUNT_FIELDS, count);
     }
 
-    @Test
-    @DisplayName("Check " + FIELD_ID + " field type")
-    void checkIdFieldType() {
-        final long countLong = allFields.stream()
-                .filter(f -> f.getType().getTypeName().equals(LONG_TYPE)
-                        & f.getName().equals(FIELD_ID))
+    @ParameterizedTest
+    @CsvSource({"id,1",
+            "name,1",
+            "client,1",
+            "employee,1",
+            "category,1",
+            "model,1",
+            "manufacturer,1",
+            "powerType,1",
+            "characteristic,1",
+            "description,1",
+            "power,1"
+    })
+    @DisplayName("To " + CLASS_NAME + " check fields name")
+    void checkFieldNameName(String name, long expected) {
+        final long count = allFields.stream()
+                .filter(f -> f.getName().equals(name))
                 .count();
-        assertEquals(1, countLong);
-    }
-
-    @Test
-    @DisplayName("Check " + FIELD_NAME + " field type")
-    void checkNameFieldType() {
-        final long countLong = allFields.stream()
-                .filter(f -> f.getType().getTypeName().equals(STRING_TYPE)
-                        & f.getName().equals(FIELD_NAME))
-                .count();
-        assertEquals(1, countLong);
-    }
-
-    /**/
-    @Test
-    @DisplayName("Check Getters and Setters")
-    void checkGettersAndSetters() {
-        final long count = allMethods.stream()
-                .filter(m -> m.getName().equals("getId")
-                        || m.getName().equals("getName")
-                        || m.getName().equals("setId")
-                        || m.getName().equals("setName"))
-                .count();
-        assertEquals(0, count);
+        assertEquals(expected, count);
     }
 }

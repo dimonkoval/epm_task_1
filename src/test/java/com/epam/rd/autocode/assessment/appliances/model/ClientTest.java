@@ -1,4 +1,4 @@
-package com.epam.rd.autocode.assestment.аppliances.model;
+package com.epam.rd.autocode.assessment.appliances.model;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -8,8 +8,8 @@ import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.epam.rd.autocode.assestment.аppliances.model.TestConstants.*;
-import static com.epam.rd.autocode.assestment.аppliances.model.TestConstants.Client.*;
+import static com.epam.rd.autocode.assessment.appliances.model.TestConstants.*;
+import static com.epam.rd.autocode.assessment.appliances.model.TestConstants.Client.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
