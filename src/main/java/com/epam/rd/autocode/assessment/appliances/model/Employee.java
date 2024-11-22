@@ -1,13 +1,8 @@
 package com.epam.rd.autocode.assessment.appliances.model;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-
-@Getter
-@Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class Employee extends User {
